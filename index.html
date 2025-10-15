@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Jamie's Travel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #01756F;
+            --primary-light: #7CEBE3;
+            --bg-light: #E8F8F7;
+            --text-dark: #2D3748;
+            --text-light: #718096;
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+            --spacing-xl: 3rem;
+            --container-width: 1400px;
+            --header-height: 80px;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body, .main-bg {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f7f7f7;
+            line-height: 1.6;
+            color: #2D3748;
+            scroll-behavior: smooth;
+        }
+        .header {
+            background: rgba(253, 251, 247, 0.98);
+            color: var(--text-dark);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            height: var(--header-height);
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            transition: background 0.3s ease;
+        }
+        .header.scrolled {
+            background: rgba(253, 251, 247, 0.98);
+            backdrop-filter: blur(10px);
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100%;
+            padding: 0 var(--spacing-xl);
+            max-width: var(--container-width);
+            margin: 0 auto;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            padding: var(--spacing-sm) 0;
+        }
+        .logo-img {
+            height: 100%;
+            width: auto;
+            object-fit: contain;
+            transition: opacity 0.3s ease;
+        }
+        .logo:hover .logo-img {
+            opacity: 0.8;
+        }
+        .nav-links {
+            display: flex;
+            gap: var(--spacing-lg);
+            height: 100%;
+            align-items: center;
+        }
+        .nav-links a {
+            color: var(--text-dark);
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: var(--spacing-sm) 0;
+            transition: all 0.3s ease;
+            position: relative;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            letter-spacing: 0.5px;
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            bottom: -1px;
+            left: 0;
+            background: var(--primary);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+            transform-origin: right;
+        }
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        .nav-links a:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+        .hero {
+            height: 100vh;
+            width: 100%;
+            position: relative;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            padding-top: var(--header-height);
+            overflow: hidden;
+        }
+        .hero-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        .hero-background::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=2000&q=80') center/cover no-repeat;
+            animation: scale 20s linear infinite alternate;
+        }
+        .hero-background::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, 
+                rgba(0,0,0,0.2) 0%,
+                rgba(0,0,0,0.3) 50%,
+                rgba(0,0,0,0.6) 100%
+            );
+        }
+        @keyframes scale {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 0 var(--spacing-xl);
+            width: 100%;
+        }
+        .hero-title {
+            font-size: clamp(3.5rem, 8vw, 6rem);
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: var(--spacing-lg);
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: slideUp 1s ease forwards;
+        }
+        .hero-subtitle {
+            font-size: clamp(1.2rem, 2vw, 1.8rem);
+            font-weight: 400;
+            margin-bottom: var(--spacing-xl);
+            max-width: 600px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: slideUp 1s ease 0.2s forwards;
+        }
+        @keyframes slideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .cta-btn {
+            background: var(--primary-light);
+            color: var(--primary);
+            border: none;
+            padding: var(--spacing-md) var(--spacing-xl);
+            font-size: 1.1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(124,235,227,0.3);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-btn:hover {
+            background: #fff;
+            color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(124,235,227,0.4);
+        }
+        .cta-btn::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: -100%;
+            background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.2), rgba(255,255,255,0));
+            transition: 0.5s;
+        }
+        .cta-btn:hover::after {
+            left: 100%;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .section {
+            max-width: var(--container-width);
+            margin: calc(var(--spacing-xl) * 2) auto;
+            padding: 0 var(--spacing-xl);
+            position: relative;
+        }
+        .section-title {
+            color: var(--text-dark);
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: calc(var(--spacing-xl) * 2);
+            text-align: center;
+            font-weight: 900;
+            letter-spacing: -1px;
+            text-transform: uppercase;
+            position: relative;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--primary);
+        }
+        .destinations {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-xl);
+        }
+        .destination-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 0;
+            background: #fff;
+            transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        .destination-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom,
+                rgba(0,0,0,0) 0%,
+                rgba(0,0,0,0.4) 50%,
+                rgba(0,0,0,0.8) 100%
+            );
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            z-index: 1;
+        }
+        .destination-card:hover {
+            transform: translateY(-10px);
+        }
+        .destination-card:hover::before {
+            opacity: 1;
+        }
+        .destination-img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            transition: transform 1.2s ease;
+            display: block;
+        }
+        .destination-card:hover .destination-img {
+            transform: scale(1.1);
+        }
+        .destination-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: var(--spacing-xl);
+            color: #fff;
+            z-index: 2;
+            transform: translateY(100px);
+            transition: transform 0.6s ease;
+        }
+        .destination-card:hover .destination-content {
+            transform: translateY(0);
+        }
+        .destination-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-md);
+            color: #fff;
+            position: relative;
+        }
+        .destination-desc {
+            color: rgba(255,255,255,0.9);
+            font-size: 1rem;
+            line-height: 1.6;
+            max-width: 90%;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease 0.1s;
+        }
+        .destination-card:hover .destination-desc {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .why-choose {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-xl);
+            margin-top: var(--spacing-xl);
+            padding: var(--spacing-md);
+        }
+        .why-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: var(--spacing-xl);
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(1,117,111,0.1);
+        }
+        .why-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--bg-light) 0%, #fff 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 0;
+        }
+        .why-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border-color: var(--primary-light);
+        }
+        .why-card:hover::before {
+            opacity: 1;
+        }
+        .why-icon {
+            font-size: 3em;
+            color: var(--primary);
+            margin-bottom: var(--spacing-md);
+            position: relative;
+            z-index: 1;
+            transition: transform 0.4s ease;
+        }
+        .why-card:hover .why-icon {
+            transform: scale(1.2);
+        }
+        .why-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-sm);
+            color: var(--primary);
+            position: relative;
+            z-index: 1;
+        }
+        .why-desc {
+            color: #4A5568;
+            font-size: 1rem;
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+        }
+        .contact-section {
+            background: linear-gradient(135deg, var(--primary) 0%, #019d94 100%);
+            color: #fff;
+            border-radius: 30px;
+            margin: var(--spacing-xl) auto;
+            padding: var(--spacing-xl);
+            text-align: center;
+            max-width: 1000px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(1,117,111,0.2);
+        }
+        .contact-section::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            animation: rotate 30s linear infinite;
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .contact-title {
+            font-size: clamp(1.8rem, 3vw, 2.5rem);
+            margin-bottom: var(--spacing-lg);
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            position: relative;
+        }
+        .contact-form {
+            max-width: 500px;
+            margin: var(--spacing-lg) auto;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+            position: relative;
+            backdrop-filter: blur(10px);
+            padding: var(--spacing-lg);
+            border-radius: 20px;
+            background: rgba(255,255,255,0.1);
+        }
+        .contact-form input, .contact-form textarea {
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: var(--spacing-md);
+            font-size: 1rem;
+            width: 100%;
+            background: rgba(255,255,255,0.9);
+            transition: all 0.3s ease;
+            color: var(--primary);
+        }
+        .contact-form input:focus, .contact-form textarea:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            background: #fff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        .contact-form textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        .contact-btn {
+            background: var(--primary-light);
+            color: var(--primary);
+            border: none;
+            padding: var(--spacing-md);
+            font-size: 1.1rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: var(--spacing-sm);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+        .contact-btn:hover {
+            background: #fff;
+            color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .contact-info {
+            margin-top: var(--spacing-lg);
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: center;
+            gap: var(--spacing-xl);
+            flex-wrap: wrap;
+        }
+        .contact-info span {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        .footer {
+            background: var(--primary);
+            color: #fff;
+            text-align: center;
+            padding: var(--spacing-xl) 0;
+            margin-top: var(--spacing-xl);
+            font-size: 1rem;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary-light), transparent);
+        }
+        @media (max-width: 1280px) {
+            .destinations {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .section {
+                padding: 0 var(--spacing-lg);
+            }
+        }
+        @media (max-width: 1024px) {
+            :root {
+                --container-width: 100%;
+                --header-height: 70px;
+            }
+            .navbar {
+                padding: 0 var(--spacing-lg);
+            }
+            .hero-content {
+                padding: 0 var(--spacing-lg);
+            }
+            .hero-title {
+                font-size: clamp(3rem, 6vw, 4rem);
+            }
+            .destination-img {
+                height: 350px;
+            }
+        }
+        @media (max-width: 768px) {
+            .header {
+                background: #FDFBF7;
+            }
+            .navbar {
+                padding: 0 var(--spacing-md);
+                flex-direction: column;
+                height: auto;
+            }
+            .logo {
+                padding: var(--spacing-sm) 0;
+            }
+            .nav-links {
+                width: 100%;
+                padding: var(--spacing-sm) 0;
+                justify-content: space-around;
+                border-top: 1px solid rgba(0,0,0,0.1);
+            }
+            .nav-links a {
+                font-size: 0.9rem;
+                padding: var(--spacing-xs) var(--spacing-sm);
+            }
+            .hero {
+                height: 80vh;
+            }
+            .hero-title {
+                font-size: clamp(2.5rem, 5vw, 3rem);
+            }
+            .hero-subtitle {
+                font-size: clamp(1rem, 2vw, 1.2rem);
+            }
+            .destinations {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-lg);
+            }
+            .destination-img {
+                height: 300px;
+            }
+            .destination-content {
+                transform: translateY(0);
+                padding: var(--spacing-lg);
+            }
+            .destination-desc {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            .destination-card::before {
+                opacity: 1;
+                background: linear-gradient(to bottom,
+                    rgba(0,0,0,0) 0%,
+                    rgba(0,0,0,0.6) 50%,
+                    rgba(0,0,0,0.9) 100%
+                );
+            }
+            .section-title {
+                font-size: clamp(1.8rem, 4vw, 2.2rem);
+                margin-bottom: var(--spacing-xl);
+            }
+        }
+        @media (max-width: 480px) {
+            :root {
+                --spacing-xl: 2rem;
+                --spacing-lg: 1.5rem;
+                --spacing-md: 1rem;
+                --spacing-sm: 0.75rem;
+                --header-height: auto;
+            }
+            .nav-links {
+                flex-direction: column;
+                align-items: center;
+                padding: var(--spacing-sm) 0;
+            }
+            .nav-links a {
+                width: 100%;
+                text-align: center;
+                padding: var(--spacing-sm) 0;
+            }
+            .hero {
+                height: 70vh;
+            }
+            .hero-title {
+                font-size: clamp(2rem, 4vw, 2.5rem);
+                letter-spacing: -1px;
+            }
+            .destination-img {
+                height: 250px;
+            }
+            .destination-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-bg">
+        <!-- Header & Navigation -->
+        <div class="header">
+            <div class="navbar">
+                <div class="logo">
+                    <img src="https://ek1755083606574.file.force.com/file-asset/image_13?v=1&height=80&width=400" alt="Jamie's Travel Logo" class="logo-img" />
+                </div>
+                <div class="nav-links">
+                    <a href="#destinations">Destinations</a>
+                    <a href="#why">Why Us</a>
+                    <a href="#contact">Contact</a>
+                </div>
+            </div>
+        </div>
+        <!-- Hero Section -->
+        <div class="hero">
+            <div class="hero-background"></div>
+            <div class="hero-content">
+                <h1 class="hero-title">Beyond Ordinary Travel</h1>
+                <div class="hero-subtitle">Experience extraordinary journeys and unforgettable destinations with Jamie's Travel, your premium travel partner.</div>
+                <div class="hero-cta">
+                    <a href="#contact" class="cta-btn">Plan Your Journey</a>
+                </div>
+            </div>
+        </div>
+        <!-- Destinations Section -->
+        <div class="section" id="destinations">
+            <div class="section-title">Popular Destinations</div>
+            <div class="destinations">
+                <div class="destination-card">
+                    <img class="destination-img" src="https://images.unsplash.com/photo-1465156799763-2c087c332922?auto=format&fit=crop&w=800&q=80" alt="Beach Getaway" />
+                    <div class="destination-content">
+                        <h3 class="destination-title">Beach Getaways</h3>
+                        <div class="destination-desc">Relax on sun-kissed beaches in Mauritius, Zanzibar, and the Maldives. All-inclusive packages available.</div>
+                    </div>
+                </div>
+                <div class="destination-card">
+                    <img class="destination-img" src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80" alt="Mountain Adventure" />
+                    <div class="destination-content">
+                        <h3 class="destination-title">Mountain Adventures</h3>
+                        <div class="destination-desc">Experience the thrill of the Drakensberg, Kilimanjaro, or the Alps. Guided tours and hiking packages.</div>
+                    </div>
+                </div>
+                <div class="destination-card">
+                    <img class="destination-img" src="https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=800&q=80" alt="City Breaks" />
+                    <div class="destination-content">
+                        <h3 class="destination-title">City Breaks</h3>
+                        <div class="destination-desc">Discover vibrant cities like Cape Town, Paris, and Dubai. Flights, hotels, and sightseeing included.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Why Choose Us Section -->
+        <div class="section" id="why">
+            <div class="section-title">Why Choose Jamie's Travel?</div>
+            <div class="why-choose">
+                <div class="why-card">
+                    <div class="why-icon">&#128736;</div>
+                    <div class="why-title">Tailor-Made Packages</div>
+                    <div class="why-desc">We customize every trip to suit your needs and budget, ensuring a unique experience every time.</div>
+                </div>
+                <div class="why-card">
+                    <div class="why-icon">&#128222;</div>
+                    <div class="why-title">24/7 Support</div>
+                    <div class="why-desc">Our travel experts are available around the clock to assist you before, during, and after your trip.</div>
+                </div>
+                <div class="why-card">
+                    <div class="why-icon">&#128176;</div>
+                    <div class="why-title">Best Price Guarantee</div>
+                    <div class="why-desc">We offer competitive rates and exclusive deals you won't find anywhere else.</div>
+                </div>
+            </div>
+        </div>
+        <!-- Contact Section -->
+        <div class="contact-section" id="contact">
+            <div class="contact-title">Contact Us for Your Next Adventure</div>
+            <div style="margin-bottom: 18px;">Let us help you plan the perfect getaway. Fill in the form and our team will get back to you soon!</div>
+            <form id="contact-form" class="contact-form">
+                <input type="text" name="name" placeholder="Your Name" class="input" required>
+                <input type="email" name="email" placeholder="Your Email" class="input" required>
+                <textarea name="message" placeholder="How can we help you?" class="input" required></textarea>
+                <button type="submit" class="contact-btn">Send Inquiry</button>
+            </form>
+            <div style="margin-top: 18px; font-size: 1.1em;">
+                <b>Email:</b> info@jamiestravel.com &nbsp; | &nbsp; <b>Phone:</b> +27 21 123 4567
+            </div>
+        </div>
+        <!-- Footer -->
+        <div class="footer">
+            &copy; <span id="current-year"></span> Jamie's Travel. All rights reserved. | Designed with inspiration from One Stop Tours
+        </div>
+    </div>
+
+    <script>
+        // Toggle header background on scroll
+        document.addEventListener('scroll', function () {
+            var header = document.querySelector('.header');
+            if (!header) return;
+            if (window.scrollY > 10) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Set current year in footer
+        (function setYear(){
+            var el = document.getElementById('current-year');
+            if (el) el.textContent = new Date().getFullYear();
+        })();
+
+        // Static contact form handler (mailto)
+        (function attachFormHandler(){
+            var form = document.getElementById('contact-form');
+            if (!form) return;
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                var name = (form.elements['name'] || {}).value || '';
+                var email = (form.elements['email'] || {}).value || '';
+                var message = (form.elements['message'] || {}).value || '';
+                var subject = encodeURIComponent('New Inquiry from ' + name.trim());
+                var body = encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\n\n' + message);
+                window.location.href = 'mailto:info@jamiestravel.com?subject=' + subject + '&body=' + body;
+            });
+        })();
+    </script>
+
+    <script type="text/javascript">
+        function initEmbeddedMessaging() {
+            try {
+                embeddedservice_bootstrap.settings.language = 'en_US';
+                embeddedservice_bootstrap.init(
+                    '00DKY00000Gelsu',
+                    'Messaging_Channel_Setting',
+                    'https://ek1755083606574.my.site.com/ESWMessagingChannelSett1757366351820',
+                    {
+                        scrt2URL: 'https://ek1755083606574.my.salesforce-scrt.com'
+                    }
+                );
+            } catch (err) {
+                console.error('Error loading Embedded Messaging: ', err);
+            }
+        }
+    </script>
+    <script type="text/javascript" src="https://ek1755083606574.my.site.com/ESWMessagingChannelSett1757366351820/assets/js/bootstrap.min.js" onload="initEmbeddedMessaging()"></script>
+</body>
+</html>
+
+
